@@ -1,4 +1,3 @@
-
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
@@ -7,8 +6,27 @@ import numpy as np
 from paddleocr import PaddleOCR
 from pykospacing import Spacing
 from transformers import T5ForConditionalGeneration, T5Tokenizer
+from googletrans import Translator
+
+from fastapi.staticfiles import StaticFiles
+
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+
+# Jinja2 템플릿 설정
+templates = Jinja2Templates(directory="templates")
+
+# 정적 파일 디렉토리를 지정하고 FastAPI 앱에 마운트
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# HTML 렌더링 엔드포인트
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request, translated_text: str = ""):
+    return templates.TemplateResponse("index.html", {"request": request, "translated_text": translated_text})
+
 
 # 모델 로드
 model_name = "j5ng/et5-typos-corrector"
@@ -29,7 +47,7 @@ def translate_text(text, dest_language='en_XX'):
     model = MBartForConditionalGeneration.from_pretrained("facebook/mbart-large-50-many-to-many-mmt")
     tokenizer = MBart50TokenizerFast.from_pretrained("facebook/mbart-large-50-many-to-many-mmt")
     article_eng = text
-    tokenizer.src_lang = "ko_KR"
+    # tokenizer.src_lang = "ko_KR"
     encoded_eng = tokenizer(article_eng, return_tensors="pt")
     generated_tokens = model.generate(
         **encoded_eng,
@@ -43,28 +61,44 @@ def read_imagefile(file) -> np.ndarray:
     image = cv2.imdecode(np.fromstring(file, np.uint8), 1)
     return image
 
-@app.post("/process-image/")
-async def process_image(file: UploadFile = File(...), target_lang: str = Form(...)):
-    image_data = await file.read()
-    image = read_imagefile(image_data)
-    cv2.imwrite("temp.jpg", image)  # 임시 파일 저장
+import os
 
-    result = ocr.ocr("temp.jpg", cls=False)
+@app.post("/process-image/")
+async def process_image(request: Request, file: UploadFile = File(...), target_lang: str = Form(...)):
+    # 이미지 데이터 읽기
+    image_data = await file.read()
+
+    # 이미지 파일 저장
+    save_path = "static/images"
+    os.makedirs(save_path, exist_ok=True)
+    image_save_path = os.path.join(save_path, "temp.jpg")
+    with open(image_save_path, "wb") as f:
+        f.write(image_data)
+
+    # OCR 처리 및 번역
+    result = ocr.ocr(image_save_path, cls=False)
     extracted_text = " ".join([line[1][0] for line in result[0]])
     corrected_text = correct_spacing(extracted_text)
     final_text = correct_typo(corrected_text, model, tokenizer)
     translated_text = translate_text(final_text, dest_language=target_lang)
 
-    return JSONResponse(content={"사진에서 텍스트 추출": extracted_text,
-                                 "맞춤법 조정": final_text,
-                                 "번역글": translated_text})
+    # HTML 템플릿에 번역된 텍스트 전달
+    return templates.TemplateResponse(
+        "index.html",
+        {"translated_text": translated_text[0], "request": request},
+        media_type="text/html"
+    )
 
+@app.post("/process-text/")
+async def process_text(request: Request, text_to_translate: str = Form(...), target_lang: str = Form(...)):
+    # 텍스트 수정 및 번역
+    corrected_text = correct_spacing(text_to_translate)
+    final_text = correct_typo(corrected_text, model, tokenizer)
+    translated_text2 = translate_text(final_text, dest_language=target_lang)
 
-
-
-
-
-
-    
-
-
+    # HTML 템플릿에 번역된 텍스트 전달
+    return templates.TemplateResponse(
+        "index.html",
+        {"translated_text2": translated_text2[0], "request": request},
+        media_type="text/html"
+    )

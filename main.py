@@ -92,9 +92,9 @@ async def process_image(request: Request, file: UploadFile = File(...), target_l
 @app.post("/process-text/")
 async def process_text(request: Request, text_to_translate: str = Form(...), target_lang: str = Form(...)):
     # 텍스트 수정 및 번역
-    corrected_text = correct_spacing(text_to_translate)
-    final_text = correct_typo(corrected_text, model, tokenizer)
-    translated_text2 = translate_text(final_text, dest_language=target_lang)
+    # corrected_text = correct_spacing(text_to_translate)
+    # final_text = correct_typo(corrected_text, model, tokenizer)
+    translated_text2 = translate_text(text_to_translate, dest_language=target_lang)
 
     # HTML 템플릿에 번역된 텍스트 전달
     return templates.TemplateResponse(

@@ -14,9 +14,16 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.title {
-  text-align: center;
-  color: #333;
+.title1 {
+  margin-top: 25%;
+  text-align: left;
+  color: white;
+}
+
+.title2 {
+  margin-top: 25%;
+  text-align: left;
+  color: white;
 }
 
 form {
@@ -59,4 +66,34 @@ form textarea {
   resize: vertical;
   min-height: 100px;
   max-width: 100%;
+}
+
+.sub {
+  margin: 0 50%;
+}
+
+.sub2 {
+  display: none;
+  margin: 10% 40%;
+  width: 600px;
+}
+
+.sub1 {
+  display: none;
+  margin: 10% 40%;
+  width: 600px;
+}
+
+.side {
+  margin-top: -10%;
+  width: 24%;
+  height: 100%;
+  background-color: #333;
+  position: absolute;
+}
+
+.sub_0 {
+
+  margin: 10% 40%;
+  width: 600px;
 }

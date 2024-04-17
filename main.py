@@ -6,7 +6,7 @@ import numpy as np
 from paddleocr import PaddleOCR
 from pykospacing import Spacing
 from transformers import T5ForConditionalGeneration, T5Tokenizer
-from googletrans import Translator
+import uvicorn
 
 from fastapi.staticfiles import StaticFiles
 
@@ -92,9 +92,9 @@ async def process_image(request: Request, file: UploadFile = File(...), target_l
 @app.post("/process-text/")
 async def process_text(request: Request, text_to_translate: str = Form(...), target_lang: str = Form(...)):
     # 텍스트 수정 및 번역
-    corrected_text = correct_spacing(text_to_translate)
-    final_text = correct_typo(corrected_text, model, tokenizer)
-    translated_text2 = translate_text(final_text, dest_language=target_lang)
+    # corrected_text = correct_spacing(text_to_translate)
+    # final_text = correct_typo(corrected_text, model, tokenizer)
+    translated_text2 = translate_text(text_to_translate, dest_language=target_lang)
 
     # HTML 템플릿에 번역된 텍스트 전달
     return templates.TemplateResponse(
@@ -102,3 +102,7 @@ async def process_text(request: Request, text_to_translate: str = Form(...), tar
         {"translated_text2": translated_text2[0], "request": request},
         media_type="text/html"
     )
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

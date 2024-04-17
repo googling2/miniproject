@@ -1,8 +1,10 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
-  margin: 0;
-  padding: 0;
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  min-height: 100vh; /* 전체 뷰포트 높이 */
+  margin: 0; /* 기본 마진 제거 */
+  text-align: center;
 }
 
 .container {
@@ -28,6 +30,7 @@ body {
 
 form {
   display: flex;
+  /* width:70%; */
   flex-direction: column;
   margin-top: 20px;
 }
@@ -68,6 +71,7 @@ form textarea {
   max-width: 100%;
 }
 
+<<<<<<< HEAD
 .sub {
   margin: 0 50%;
 }
@@ -99,3 +103,8 @@ form textarea {
 }
 
 /* asdasd */
+=======
+.mainbox{
+  width: 50%;
+}
+>>>>>>> sungmin

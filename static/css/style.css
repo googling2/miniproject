@@ -21,6 +21,7 @@ body {
 
 form {
   display: flex;
+  /* width:70%; */
   flex-direction: column;
   margin-top: 20px;
 }
@@ -60,3 +61,4 @@ form textarea {
   min-height: 100px;
   max-width: 100%;
 }
+

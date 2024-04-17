@@ -28,6 +28,7 @@ body {
 
 form {
   display: flex;
+  /* width:70%; */
   flex-direction: column;
   margin-top: 20px;
 }
@@ -68,32 +69,3 @@ form textarea {
   max-width: 100%;
 }
 
-.sub {
-  margin: 0 50%;
-}
-
-.sub2 {
-  display: none;
-  margin: 10% 40%;
-  width: 600px;
-}
-
-.sub1 {
-  display: none;
-  margin: 10% 40%;
-  width: 600px;
-}
-
-.side {
-  margin-top: -10%;
-  width: 24%;
-  height: 100%;
-  background-color: #333;
-  position: absolute;
-}
-
-.sub_0 {
-
-  margin: 10% 40%;
-  width: 600px;
-}

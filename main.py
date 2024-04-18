@@ -102,7 +102,19 @@ async def process_text(request: Request, text_to_translate: str = Form(...), tar
         {"translated_text2": translated_text2[0], "request": request},
         media_type="text/html"
     )
+# print("yg")
 
+# 맞춤법 기능
+@app.post("/process-correct")
+async def process_correct(request: Request, text_to_correct: str = Form(...)):
+    # corrected_text = correct_spacing(text_to_correct)
+    final_text = correct_typo(text_to_correct, model, tokenizer)
+
+    return templates.TemplateResponse(
+        "index.html",
+        {"final_text": final_text, "request": request},
+        media_type="text/html"
+    )
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

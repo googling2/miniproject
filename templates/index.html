@@ -165,7 +165,18 @@
          </div>
          <input type="submit" value="텍스트 번역" />
       </form>
+      <form action="/process-correct/" method="post">
+       <textarea
+         name="text_to_correct"
+         rows="12"
+         cols="53"
+         placeholder="교정할 텍스트를 입력하세요."
+       ></textarea>
+       <div name="final_text">{{ final_text if final_text else "" }}</div>
+       <input type="submit" value="텍스트 교정" />
+     </form>
    </div>
-</body>
+
+  </body>
 
 </html>

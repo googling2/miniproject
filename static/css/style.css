@@ -74,3 +74,9 @@ form textarea {
 .mainbox{
   width: 50%;
 }
+
+.preview-img {
+  width: 200px;  /* 원하는 너비로 설정 */
+  height: auto;  /* 원하는 높이로 설정 (auto는 비율 유지) */
+  display: none; /* 처음에는 숨겨두고, 파일이 선택되면 보여줌 */
+}

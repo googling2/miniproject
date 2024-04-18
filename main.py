@@ -65,16 +65,16 @@ async def process_image(request: Request, file: UploadFile = File(...), target_l
 
 @app.post("/process-text/")
 async def process_text(request: Request, text_to_translate: str = Form(...), target_lang: str = Form(...)):
-    corrected_text = correct_spacing(text_to_translate)
-    final_text = correct_typo(corrected_text, model, tokenizer)  # 여기에 model과 tokenizer를 전달
-    translated_text = translate_text(final_text, dest_language=target_lang)
+    # corrected_text = correct_spacing(text_to_translate)
+    # final_text = correct_typo(corrected_text, model, tokenizer)
+    translated_text = translate_text(text_to_translate, dest_language=target_lang)
+    translated_lines = translated_text.splitlines()  # 번역된 텍스트를 줄별로 분할
 
     return templates.TemplateResponse(
         "index.html",
-        {"translated_text": translated_text, "request": request},
+        {"translated_lines": translated_lines, "request": request},  # 템플릿에 줄별로 분할된 텍스트를 전달
         media_type="text/html"
     )
-
 
 @app.post("/process-correct")
 async def process_correct(request: Request, text_to_correct: str = Form(...)):

@@ -16,6 +16,8 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+
+
 # Jinja2 템플릿 설정
 templates = Jinja2Templates(directory="templates")
 

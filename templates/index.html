@@ -9,39 +9,13 @@
 
 <body>
    <div class="mainbox">
-      <h1 class="title">사진 속 텍스트 인식</h1>
-
-      <form action="/process-image/" method="post" enctype="multipart/form-data">
-         <input type="file" name="file" id="file" onchange="previewFile()" />
-         <img id="previewImg" class="preview-img"  src="#" alt="이미지 미리보기" style="display:none;" width="300px" height="300px" />
-
-         <script>
-            function previewFile() {
-               var preview = document.getElementById('previewImg');
-               var file = document.getElementById('file').files[0];
-               var reader = new FileReader();
-
-               reader.onloadend = function () {
-                  preview.src = reader.result;
-                  preview.style.display = 'block'; // 이미지가 성공적으로 로드되면 화면에 표시됩니다.
-               }
-
-               if (file) {
-                  reader.readAsDataURL(file); // 파일을 읽어서 DataURL로 미리보기에 표시합니다.
-               } else {
-                  preview.src = "";
-                  preview.style.display = 'none'; // 파일이 없으면 미리보기를 숨깁니다.
-               }
-            }
-
-            // 페이지 로드가 완료되었을 때 실행됩니다.
-            document.addEventListener('DOMContentLoaded', function () {
-               var fileInput = document.getElementById('file');
-               fileInput.addEventListener('change', previewFile); // 파일 입력 폼에 이벤트 리스너를 추가합니다.
-            });                                                                  
-         </script>
-
-         <select name="target_lang">
+      <h1 class="title">TRANSLATION TOOL</h1>
+      
+      <div class="form-container">
+        
+        <!-- 텍스트 번역을 위한 form -->
+        <form action="/process-text/" method="post" class="translation-form">
+          <select name="target_lang">
             <option value="ko">한국어</option>
             <option value="en">영어</option>
             <option value="ar">아랍어</option>
@@ -95,19 +69,19 @@
             <option value="gl">갈리시아어</option>
             <option value="sl">슬로베니아어</option>
             <option value="zh-TW">중국어(번체)</option>
-         </select>
-
-         <textarea name="translated_text" rows="12" cols="53" readonly placeholder="번역된 텍스트가 여기에 표시됩니다.">
-      {{ translated_text if translated_text else "" }}
-   </textarea>
-
-         <input type="submit" value="사진 번역" />
-      </form>
-
-      <!-- 텍스트 처리를 위한 form -->
-      <form action="/process-text/" method="post">
-         <textarea name="text_to_translate" rows="12" cols="53" placeholder="번역할 텍스트를 입력하세요."></textarea>
-         <select name="target_lang">
+          </select>
+          <div class="input-wrapper">
+            <textarea class="textarea2" name="text_to_translate" id="text_input" placeholder="번역할 텍스트를 입력하세요."></textarea>
+            <img id="previewImg" class="preview-img" src="#" alt="이미지 미리보기" style="display:none;" width="200px" height="200px" />
+        </div>
+          <div name="translated_text2"></div>
+          <input type="submit" value="텍스트 번역" />
+        </form>
+        <!-- 이미지 번역을 위한 form -->
+        
+        <form action="/process-image/" method="post" enctype="multipart/form-data" class="translation-form">
+           <input type="file" name="file" id="file" onchange="previewFile()" class="file" />
+           <select name="target_lang">
             <option value="ko">한국어</option>
             <option value="en">영어</option>
             <option value="ar">아랍어</option>
@@ -161,24 +135,51 @@
             <option value="gl">갈리시아어</option>
             <option value="sl">슬로베니아어</option>
             <option value="zh-TW">중국어(번체)</option>
-         </select>
-         <div name="translated_text2">
-            {{ translated_text2 if translated_text2 else "" }}
-         </div>
-         <input type="submit" value="텍스트 번역" />
-      </form>
-      <form action="/process-correct/" method="post">
-       <textarea
-         name="text_to_correct"
-         rows="12"
-         cols="53"
-         placeholder="교정할 텍스트를 입력하세요."
-       ></textarea>
-       <div name="final_text">{{ final_text if final_text else "" }}</div>
-       <input type="submit" value="맞춤법 교정" />
-     </form>
+           </select>
+           <textarea class="textarea" name="translated_text" rows="12" cols="53" readonly placeholder="번역된 텍스트가 여기에 표시됩니다.">{{ translated_text if translated_text else "" }}
+            {{ translated_text2 if translated_text2 else "" }}</textarea>
+           
+           <input type="submit" value="사진 번역" />
+        </form>
+        
+        <!-- 맞춤법 교정을 위한 form -->
+        <form action="/process-correct/" method="post" class="translation-form">
+          <textarea class="textarea3" name="text_to_correct" rows="12" cols="53" placeholder="교정할 텍스트를 입력하세요."></textarea>
+          <textarea class="textarea3" rows="12" cols="53" placeholder="교정한 텍스트 값이 나옵니다.">{{ final_text if final_text else "" }}</textarea>
+          <input type="submit" value="맞춤법 교정" />
+        </form>
+      </div>
+      
    </div>
 
+   <script>
+    function previewFile() {
+        var preview = document.getElementById('previewImg');
+        var file = document.getElementById('file').files[0];
+        var reader = new FileReader();
+        var textInput = document.getElementById('text_input');
+    
+        reader.onloadend = function () {
+            if (file) {
+                preview.src = reader.result;
+                preview.style.display = 'block'; // 이미지를 표시
+                textInput.style.display = 'none'; // 텍스트 입력을 숨김
+            }
+        }
+    
+        if (file) {
+            reader.readAsDataURL(file); // 파일을 읽어서 DataURL로 미리보기에 표시
+        } else {
+            preview.src = "";
+            preview.style.display = 'none'; // 파일이 없으면 미리보기 숨김
+            textInput.style.display = 'block'; // 텍스트 입력을 표시
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('file');
+        fileInput.addEventListener('change', previewFile);
+    });
+    </script>
   </body>
 
 </html>

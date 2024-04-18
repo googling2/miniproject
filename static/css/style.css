@@ -10,7 +10,8 @@ body {
 .mainbox {
   width: 100%; /* 전체 폭으로 조정하여 정렬 개선 */
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 상자 그림자 효과 */
+  
+  
 }
 
 .form-container {

@@ -16,6 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+
 # Jinja2 템플릿 설정
 templates = Jinja2Templates(directory="templates")
 
@@ -57,6 +58,7 @@ def translate_text(text, dest_language='en_XX'):
 
     return result
 
+
 def read_imagefile(file) -> np.ndarray:
     image = cv2.imdecode(np.fromstring(file, np.uint8), 1)
     return image
@@ -80,7 +82,8 @@ async def process_image(request: Request, file: UploadFile = File(...), target_l
     extracted_text = " ".join([line[1][0] for line in result[0]])
     corrected_text = correct_spacing(extracted_text)
     final_text = correct_typo(corrected_text, model, tokenizer)
-    translated_text = translate_text(final_text, dest_language=target_lang)
+    translated_text = translate_text(final_text, source_lang='ko', target_lang=target_lang)
+
 
     # HTML 템플릿에 번역된 텍스트 전달
     return templates.TemplateResponse(

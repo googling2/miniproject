@@ -1,62 +1,182 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>ppapago</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', path='css/style.css') }}"
-    />
-  </head>
-  <body>
-     <div class="mainbox">
-    <h1 class="title">사진 속 텍스트 인식</h1>
 
-   <form action="/process-image/" method="post" enctype="multipart/form-data">
-      <input type="file" name="file" />
-      
-      <select name="target_lang">
-         <option value="ko_KR">한국어</option>
-         <option value="de_DE">독일어</option>
-         <option value="en_XX">영어</option>
-         <option value="ja_XX">일본어</option>
-         <option value="zh_CN">중국어</option>
-      </select>
-      
-      <textarea
-      name="translated_text"
-      rows="12"
-      cols="53"
-      readonly
-      placeholder="번역된 텍스트가 여기에 표시됩니다."
-      >
+<head>
+   <meta charset="UTF-8" />
+   <title>ppapago</title>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/style.css') }}" />
+</head>
+
+<body>
+   <div class="mainbox">
+      <h1 class="title">사진 속 텍스트 인식</h1>
+
+      <form action="/process-image/" method="post" enctype="multipart/form-data">
+         <input type="file" name="file" id="file" onchange="previewFile()" />
+         <img id="previewImg" class="preview-img" src="#" alt="이미지 미리보기" style="display:none;" />
+
+         <script>
+            function previewFile() {
+               var preview = document.getElementById('previewImg');
+               var file = document.getElementById('file').files[0];
+               var reader = new FileReader();
+
+               reader.onloadend = function () {
+                  preview.src = reader.result;
+                  preview.style.display = 'block'; // 이미지가 성공적으로 로드되면 화면에 표시됩니다.
+               }
+
+               if (file) {
+                  reader.readAsDataURL(file); // 파일을 읽어서 DataURL로 미리보기에 표시합니다.
+               } else {
+                  preview.src = "";
+                  preview.style.display = 'none'; // 파일이 없으면 미리보기를 숨깁니다.
+               }
+            }
+
+            // 페이지 로드가 완료되었을 때 실행됩니다.
+            document.addEventListener('DOMContentLoaded', function () {
+               var fileInput = document.getElementById('file');
+               fileInput.addEventListener('change', previewFile); // 파일 입력 폼에 이벤트 리스너를 추가합니다.
+            });                                                                  
+         </script>
+
+         <select name="target_lang">
+            <option value="ko_KR">한국어</option>
+            <option value="en_XX">영어</option>
+            <option value="ar_AR">아랍어</option>
+            <option value="cs_CZ">체코어</option>
+            <option value="de_DE">독일어</option>
+            <option value="es_XX">스페인어</option>
+            <option value="et_EE">에스토니아어</option>
+            <option value="fi_FI">핀란드어</option>
+            <option value="fr_XX">프랑스어</option>
+            <option value="gu_IN">구자라트어</option>
+            <option value="hi_IN">힌디어</option>
+            <option value="it_IT">이탈리아어</option>
+            <option value="ja_XX">일본어</option>
+            <option value="kk_KZ">카자흐어</option>
+            <option value="lt_LT">리투아니아어</option>
+            <option value="lv_LV">라트비아어</option>
+            <option value="my_MM">버마어</option>
+            <option value="ne_NP">네팔어</option>
+            <option value="nl_XX">네덜란드어</option>
+            <option value="ro_RO">루마니아어</option>
+            <option value="ru_RU">러시아어</option>
+            <option value="si_LK">싱할라어</option>
+            <option value="tr_TR">터키어</option>
+            <option value="vi_VN">베트남어</option>
+            <option value="zh_CN">중국어(간체)</option>
+            <option value="af_ZA">아프리칸스어</option>
+            <option value="az_AZ">아제르바이잔어</option>
+            <option value="bn_IN">벵골어</option>
+            <option value="fa_IR">페르시아어</option>
+            <option value="he_IL">히브리어</option>
+            <option value="hr_HR">크로아티아어</option>
+            <option value="id_ID">인도네시아어</option>
+            <option value="ka_GE">조지아어</option>
+            <option value="km_KH">크메르어</option>
+            <option value="mk_MK">마케도니아어</option>
+            <option value="ml_IN">말라얄람어</option>
+            <option value="mn_MN">몽골어</option>
+            <option value="mr_IN">마라티어</option>
+            <option value="pl_PL">폴란드어</option>
+            <option value="ps_AF">파슈토어</option>
+            <option value="pt_XX">포르투갈어</option>
+            <option value="sv_SE">스웨덴어</option>
+            <option value="sw_KE">스와힐리어</option>
+            <option value="ta_IN">타밀어</option>
+            <option value="te_IN">텔루구어</option>
+            <option value="th_TH">태국어</option>
+            <option value="tl_XX">타갈로그어</option>
+            <option value="uk_UA">우크라이나어</option>
+            <option value="ur_PK">우르두어</option>
+            <option value="xh_ZA">코사어</option>
+            <option value="gl_ES">갈리시아어</option>
+            <option value="sl_SI">슬로베니아어</option>
+         </select>
+
+         <textarea name="translated_text" rows="12" cols="53" readonly placeholder="번역된 텍스트가 여기에 표시됩니다.">
       {{ translated_text if translated_text else "" }}
    </textarea>
-   
-   <input type="submit" value="사진 번역" />
-</form>
 
-<!-- 텍스트 처리를 위한 form -->
-<form action="/process-text/" method="post">
-   <textarea
-   name="text_to_translate"
-   rows="12"
-   cols="53"
-   placeholder="번역할 텍스트를 입력하세요."
-   ></textarea>
-   <select name="target_lang">
-      <option value="ko_KR">한국어</option>
-      <option value="de_DE">독일어</option>
-      <option value="en_XX">영어</option>
-      <option value="ja_XX">일본어</option>
-      <option value="zh_CN">중국어</option>
-   </select>
-   <div name="translated_text2">
-      {{ translated_text2 if translated_text2 else "" }}
+         <input type="submit" value="사진 번역" />
+      </form>
+
+      <!-- 텍스트 처리를 위한 form -->
+      <form action="/process-text/" method="post">
+         <textarea name="text_to_translate" rows="12" cols="53" placeholder="번역할 텍스트를 입력하세요."></textarea>
+         <select name="target_lang">
+            <option value="ko_KR">한국어</option>
+            <option value="en_XX">영어</option>
+            <option value="ar_AR">아랍어</option>
+            <option value="cs_CZ">체코어</option>
+            <option value="de_DE">독일어</option>
+            <option value="es_XX">스페인어</option>
+            <option value="et_EE">에스토니아어</option>
+            <option value="fi_FI">핀란드어</option>
+            <option value="fr_XX">프랑스어</option>
+            <option value="gu_IN">구자라트어</option>
+            <option value="hi_IN">힌디어</option>
+            <option value="it_IT">이탈리아어</option>
+            <option value="ja_XX">일본어</option>
+            <option value="kk_KZ">카자흐어</option>
+            <option value="lt_LT">리투아니아어</option>
+            <option value="lv_LV">라트비아어</option>
+            <option value="my_MM">버마어</option>
+            <option value="ne_NP">네팔어</option>
+            <option value="nl_XX">네덜란드어</option>
+            <option value="ro_RO">루마니아어</option>
+            <option value="ru_RU">러시아어</option>
+            <option value="si_LK">싱할라어</option>
+            <option value="tr_TR">터키어</option>
+            <option value="vi_VN">베트남어</option>
+            <option value="zh_CN">중국어(간체)</option>
+            <option value="af_ZA">아프리칸스어</option>
+            <option value="az_AZ">아제르바이잔어</option>
+            <option value="bn_IN">벵골어</option>
+            <option value="fa_IR">페르시아어</option>
+            <option value="he_IL">히브리어</option>
+            <option value="hr_HR">크로아티아어</option>
+            <option value="id_ID">인도네시아어</option>
+            <option value="ka_GE">조지아어</option>
+            <option value="km_KH">크메르어</option>
+            <option value="mk_MK">마케도니아어</option>
+            <option value="ml_IN">말라얄람어</option>
+            <option value="mn_MN">몽골어</option>
+            <option value="mr_IN">마라티어</option>
+            <option value="pl_PL">폴란드어</option>
+            <option value="ps_AF">파슈토어</option>
+            <option value="pt_XX">포르투갈어</option>
+            <option value="sv_SE">스웨덴어</option>
+            <option value="sw_KE">스와힐리어</option>
+            <option value="ta_IN">타밀어</option>
+            <option value="te_IN">텔루구어</option>
+            <option value="th_TH">태국어</option>
+            <option value="tl_XX">타갈로그어</option>
+            <option value="uk_UA">우크라이나어</option>
+            <option value="ur_PK">우르두어</option>
+            <option value="xh_ZA">코사어</option>
+            <option value="gl_ES">갈리시아어</option>
+            <option value="sl_SI">슬로베니아어</option>
+         </select>
+         <div name="translated_text2">
+            {{ translated_text2 if translated_text2 else "" }}
+         </div>
+         <input type="submit" value="텍스트 번역" />
+      </form>
+      <form action="/process-correct/" method="post">
+       <textarea
+         name="text_to_correct"
+         rows="12"
+         cols="53"
+         placeholder="교정할 텍스트를 입력하세요."
+       ></textarea>
+       <div name="final_text">{{ final_text if final_text else "" }}</div>
+       <input type="submit" value="텍스트 교정" />
+     </form>
    </div>
-   <input type="submit" value="텍스트 번역" />
-</form>
-</div>
-</body>
+
+  </body>
+
 </html>
